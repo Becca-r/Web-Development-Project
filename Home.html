@@ -6,6 +6,7 @@
   <title>Holiday Meal Planner</title>
   <link rel="stylesheet" href="style.css" />
   <script src="script.js"></script>
+  <script src="./htmx/htmx.min.js"></script>
 </head>
 
 <body>
@@ -106,7 +107,7 @@
       document.querySelectorAll('[data-index]').forEach(btn => {
         btn.addEventListener('click', e => {
           const index = e.target.getAttribute('data-index');
-          const updated = saved.filter((_, i) => i != index);
+          const updated = saved.filter((_, i) => i !== index);
           localStorage.setItem('myRecipes', JSON.stringify(updated));
           e.target.parentElement.remove();
         });
