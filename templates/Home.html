@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Holiday Meal Planner</title>
+  <link rel="stylesheet" href="../static/css/main.css" />
+  <script src="../static/js/script.js"></script>
+  <script src="../static/js/save.js" defer></script>
+  <script src="../static/libs/htmx.min.js"></script>
+</head>
+
+<body>
+  <h1> Plan the Perfect Holiday Meal </h1>
+
+  <button class="button" hx-get="/browse" hx-swap="innerHTML" hx-target="#recipe" hx-trigger="click">Browse Recipes</button>
+  <button class="button" hx-get="/drinks" hx-swap="innerHTML" hx-target="#recipe" hx-trigger="click">Drinks!!!</button>
+  <button class="button" hx-get="/write" hx-swap="innerHTML" hx-target="#recipe" hx-trigger="click">Write My Own Recipe</button>
+  <button class="button" id="myRecipes">My Recipes</button>
+
+  
+
+  <h3>---------- Recipe Spotlight ----------</h3>
+  <div id="recipe">Click a button above to get started!</div>
+</body>
+</html>
