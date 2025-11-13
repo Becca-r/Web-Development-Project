@@ -66,11 +66,7 @@ def get_ingredient_html(type_dict, start, end):
 
 @app.get('/write')
 def write_recipe():
-    return ("<h2>Write Your Own Recipe</h2>"
-            "<input type='text' id='recipeTitle' placeholder='Recipe title...' "
-            "style='width:100%;padding:8px;border-radius:8px;border:1px solid #ccc;'>"
-            "<textarea id='customRecipe' placeholder='Write your ingredients and steps here...'></textarea>"
-            "<button class='button save' id='saveRecipe'>Save Recipe</button>")
+    return render_template("write_recipe.html")
 
 if __name__ == '__main__':
     app.run(port=5000)

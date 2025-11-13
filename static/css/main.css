@@ -1,57 +1,58 @@
 body {
-      background-color: rgb(235, 215, 235);
-      text-align: center;
-      font-family: 'American Typewriter', serif;
-      margin: 0;
-      padding: 20px;
-    }
-    h1 {
-      color: rgb(90, 20, 90);
-    }
-    .button {
-      background-color: rgb(238, 215, 238);
-      border: black 1px solid;
-      color: rgb(0, 0, 0);
-      padding: 15px 32px;
-      margin: 8px;
-      font-size: 16px;
-      border-radius: 3px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    .button:hover {
-      background-color: rgb(144, 89, 144);
-    }
-    #recipe {
-      margin-top: 30px;
-      background: white;
-      padding: 20px;
-      border-radius: 16px;
-      display: inline-block;
-      text-align: left;
-      max-width: 500px;
-      box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
-    }
-    img {
-      max-width: 100%;
-      border-radius: 8px;
-    }
-    textarea {
-      width: 100%;
-      height: 120px;
-      border-radius: 8px;
-      padding: 10px;
-      margin-top: 10px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
-    button.save {
-      margin-top: 10px;
-      background-color: rgb(90, 20, 90);
-    }
-    .recipe-card {
-      background-color: #f8f1f8;
-      padding: 10px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-    }
+  background-color: rgb(235, 215, 235);
+  text-align: center;
+  font-family: 'American Typewriter', serif;
+  margin: 0;
+  padding: 20px;
+}
+h1 {
+  color: rgb(94, 54, 94);
+}
+.button {
+  background-color: rgb(144, 89, 144);
+  border: black 1px solid;
+  color: #ffffff;
+  padding: 15px 32px;
+  margin: 8px;
+  font-size: 16px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.button:hover {
+  background-color: rgb(166, 122, 166);
+}
+#recipe {
+  margin-top: 30px;
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  display: inline-block;
+  text-align: left;
+  max-width: 500px;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+}
+img {
+  max-width: 100%;
+  border-radius: 8px;
+}
+textarea {
+  width: 100%;
+  height: 120px;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+button.save {
+  margin-top: 10px;
+  background-color: rgb(144, 89, 144);
+  color: #ffffff;
+}
+.recipe-card {
+  background-color: #f8f1f8;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
