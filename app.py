@@ -1,7 +1,9 @@
 from flask import Flask, render_template
 import requests
 import json
-from base import db
+
+from model import Drinks, Meals
+from model.base import db
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 
