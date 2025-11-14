@@ -2,30 +2,13 @@ from flask import Flask, render_template
 import requests
 import json
 
-from model import Drinks, Meals
-from model.base import db
-
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 
-with db:
-    db.create_tables([Drinks, Meals])
-
-
-@app.before_request
-def _db_connect():
-    db.connect()
-
-
-# This hook ensures that the connection is closed when we've finished
-# processing the request.
-@app.teardown_request
-def _db_close(exc):
-    if not db.is_closed():
-        db.close()
 
 @app.route('/')
 def index():
     return render_template("Home.html")
+
 
 @app.get('/browse')
 def browse_recipes():
@@ -89,11 +72,16 @@ def get_ingredient_html(type_dict, start, end):
 
 @app.post('/add_drink')
 def add_drink():
-    pass
+
+
+
+    return "Added the drink successfully!"
 
 @app.post('/add_meal')
 def add_meal():
-    pass
+
+
+    return "Added the meal successfully!"
 
 @app.get('/write')
 def write_recipe():
