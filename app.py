@@ -21,20 +21,18 @@ def browse_recipes():
     meal_str_area = meal.get('strArea')
     meal_instructions = meal.get('strInstructions')
     meal_ingredients = make_ingredient_list(meal, 1, 20)
+    data_dict = {"title": meal_str, "category": meal_category, "area": meal_str_area, "instructions": meal_instructions,
+                 "ingredients": json.dumps(meal_ingredients), "img_url": meal_img_url}
+    json_data = json.dumps(data_dict)
 
     html_start = (f"<h2>{meal_str}</h2>"
                   f"<img src='{meal_img_url}' alt='{meal_str}'>"
                   f"<p><strong>Category: </strong>{meal_category}</p>"
                   f"<p><strong>Area: </strong>{meal_str_area}</p>")
     html_end = (f"<p><strong>Instructions: </strong>{meal_instructions}</p>"
-                "<button id='saved_meals' class='button save' hx-post='/add_meal' hx-vals='{"
-                "'title':" f"{meal_str},"
-                "'img_url':" f"{meal_img_url},"
-                "'category':" f"{meal_category},"
-                "'area':" f"{meal_str_area},"
-                "'instructions':" f"{meal_instructions},"
-                "'ingredients':" f"{json.dumps(meal_ingredients)},"
-                "}' hx-target='#meal_confirm' hx-trigger='click'>Add To Saved Meals</button>"
+                "<button id='saved_meals' class='button save' hx-post='/add_meal' hx-vals=\'"
+                f'{json_data}'
+                "\' hx-target='#meal_confirm' hx-trigger='click'>Add To Saved Meals</button>"
                 "<div id='meal_confirm'></div>")
     html_ingredients = get_ingredient_html(meal_ingredients)
 
@@ -50,17 +48,16 @@ def drinks():
     drink_category = drink.get('strCategory')
     drink_instructions = drink.get('strInstructions')
     drink_ingredients = make_ingredient_list(drink, 1, 4)
+    data_dict = {"title": drink_str, "category": drink_category, "instructions": drink_instructions,
+                 "ingredients": json.dumps(drink_ingredients), "img_url": drink_img_url}
+    json_data = json.dumps(data_dict)
 
     html_start = (f"<h2>{drink_str}</h2><img src={drink_img_url} alt={drink_str}>"
                   f"<p><strong>Category: </strong>{drink_category}</p>")
     html_end = (f"<p><strong>Instructions: </strong>{drink_instructions}</p>"
-                "<button class='button save' hx-post='/add_drink' hx-vals='{"
-                "'title':" f"{drink_str},"
-                "'img_url':" f"{drink_img_url},"
-                "'category':" f"{drink_category},"
-                "'instructions':" f"{drink_instructions},"
-                "'ingredients':" f"{json.dumps(drink_ingredients)},"
-                "}' hx-target='#drink_confirm' hx-trigger='click'>Add To Saved Drinks</button>"
+                '<button class="button save" hx-post="/add_drink" hx-vals=\''
+                f'{json_data}'
+                '\' hx-target="#drink_confirm" hx-trigger="click">Add To Saved Drinks</button>'
                 "<div id='drink_confirm'></div>")
     html_ingredients = get_ingredient_html(drink_ingredients)
 
@@ -93,27 +90,24 @@ def get_ingredient_html(ingredient_list):
 
 @app.post('/add_drink')
 def add_drink():
-    title = request.form.get("title")
+    title = request.form.get('title')
     img_url = request.form.get("img_url")
     category = request.form.get("category")
     instructions = request.form.get("instructions")
+    # This is an array so we had to convert this to json before we sent it so we re-load it here!
     ingredients = json.loads(request.form.get("ingredients"))
-
-    print(title)
 
     return "Added the drink successfully!"
 
 @app.post('/add_meal')
 def add_meal():
-    f = request.form
     title = request.form.get("title")
     img_url = request.form.get("img_url")
     category = request.form.get("category")
     instructions = request.form.get("instructions")
     area = request.form.get("area")
+    # This is an array so we had to convert this to json before we sent it so we re-load it here!
     ingredients = json.loads(request.form.get("ingredients"))
-
-    print(title)
 
     return "Added the meal successfully!"
 
