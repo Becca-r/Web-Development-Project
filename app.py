@@ -1,9 +1,9 @@
-from flask import Flask, render_template
-import requests
 import json
 
-app = Flask(__name__, static_url_path='/static', static_folder='static')
+import requests
+from flask import Flask, render_template, request
 
+app = Flask(__name__, static_url_path='/static', static_folder='static')
 
 @app.route('/')
 def index():
@@ -20,14 +20,23 @@ def browse_recipes():
     meal_category = meal.get('strCategory')
     meal_str_area = meal.get('strArea')
     meal_instructions = meal.get('strInstructions')
+    meal_ingredients = make_ingredient_list(meal, 1, 20)
+
     html_start = (f"<h2>{meal_str}</h2>"
                   f"<img src='{meal_img_url}' alt='{meal_str}'>"
                   f"<p><strong>Category: </strong>{meal_category}</p>"
                   f"<p><strong>Area: </strong>{meal_str_area}</p>")
     html_end = (f"<p><strong>Instructions: </strong>{meal_instructions}</p>"
-                "<button id='saved_meals' class='button save' hx-post='/add_meal' hx-trigger='click'>Add To Saved Meals</button>"
+                "<button id='saved_meals' class='button save' hx-post='/add_meal' hx-vals='{"
+                "'title':" f"{meal_str},"
+                "'img_url':" f"{meal_img_url},"
+                "'category':" f"{meal_category},"
+                "'area':" f"{meal_str_area},"
+                "'instructions':" f"{meal_instructions},"
+                "'ingredients':" f"{json.dumps(meal_ingredients)},"
+                "}' hx-target='#meal_confirm' hx-trigger='click'>Add To Saved Meals</button>"
                 "<div id='meal_confirm'></div>")
-    html_ingredients = get_ingredient_html(meal, 1, 20)
+    html_ingredients = get_ingredient_html(meal_ingredients)
 
     return html_start + html_ingredients + html_end
 
@@ -40,19 +49,26 @@ def drinks():
     drink_img_url = drink.get('strDrinkThumb')
     drink_category = drink.get('strCategory')
     drink_instructions = drink.get('strInstructions')
+    drink_ingredients = make_ingredient_list(drink, 1, 4)
+
     html_start = (f"<h2>{drink_str}</h2><img src={drink_img_url} alt={drink_str}>"
                   f"<p><strong>Category: </strong>{drink_category}</p>")
     html_end = (f"<p><strong>Instructions: </strong>{drink_instructions}</p>"
-                "<button class='button save' hx-post='/add_drink' hx-target='drink_confirm' hx-trigger='click'>Add To Saved Drinks</button>"
-                "<div id='drink_confirm'></div>>")
-    html_ingredients = get_ingredient_html(drink, 1, 4)
+                "<button class='button save' hx-post='/add_drink' hx-vals='{"
+                "'title':" f"{drink_str},"
+                "'img_url':" f"{drink_img_url},"
+                "'category':" f"{drink_category},"
+                "'instructions':" f"{drink_instructions},"
+                "'ingredients':" f"{json.dumps(drink_ingredients)},"
+                "}' hx-target='#drink_confirm' hx-trigger='click'>Add To Saved Drinks</button>"
+                "<div id='drink_confirm'></div>")
+    html_ingredients = get_ingredient_html(drink_ingredients)
 
     return html_start + html_ingredients + html_end
 
-def get_ingredient_html(type_dict, start, end):
-    html_ingredients = "<p><strong>Ingredients: </strong>"
+def make_ingredient_list(type_dict, start, end):
     ingredient_list = []
-    end += 1 # This makes sure that we get the last ingredient too!!!
+    end += 1  # This makes sure that we get the last ingredient too!!!
 
     for i in range(start, end):
         attribute_name = f'strIngredient{i}'
@@ -60,6 +76,11 @@ def get_ingredient_html(type_dict, start, end):
 
         if ingredient is not None and ingredient != "":
             ingredient_list.append(ingredient)
+
+    return ingredient_list
+
+def get_ingredient_html(ingredient_list):
+    html_ingredients = "<p><strong>Ingredients: </strong>"
 
     for i, ingredient in enumerate(ingredient_list):
         if i == len(ingredient_list) - 1:
@@ -72,14 +93,27 @@ def get_ingredient_html(type_dict, start, end):
 
 @app.post('/add_drink')
 def add_drink():
+    title = request.form.get("title")
+    img_url = request.form.get("img_url")
+    category = request.form.get("category")
+    instructions = request.form.get("instructions")
+    ingredients = json.loads(request.form.get("ingredients"))
 
-
+    print(title)
 
     return "Added the drink successfully!"
 
 @app.post('/add_meal')
 def add_meal():
+    f = request.form
+    title = request.form.get("title")
+    img_url = request.form.get("img_url")
+    category = request.form.get("category")
+    instructions = request.form.get("instructions")
+    area = request.form.get("area")
+    ingredients = json.loads(request.form.get("ingredients"))
 
+    print(title)
 
     return "Added the meal successfully!"
 
