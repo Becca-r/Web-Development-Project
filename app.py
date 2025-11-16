@@ -21,8 +21,7 @@ def browse_recipes():
     meal_str_area = meal.get('strArea')
     meal_instructions = meal.get('strInstructions')
     meal_ingredients = make_ingredient_list(meal, 1, 20)
-    data_dict = {"title": meal_str, "category": meal_category, "area": meal_str_area, "instructions": meal_instructions,
-                 "ingredients": json.dumps(meal_ingredients), "img_url": meal_img_url}
+    data_dict = {"title": meal_str, "category": meal_category, "area": meal_str_area, "instructions": meal_instructions, "img_url": meal_img_url, "ingredients": json.dumps(meal_ingredients)}
     json_data = json.dumps(data_dict)
 
     html_start = (f"<h2>{meal_str}</h2>"
@@ -95,9 +94,14 @@ def add_drink():
     category = request.form.get("category")
     instructions = request.form.get("instructions")
     # This is an array so we had to convert this to json before we sent it so we re-load it here!
-    ingredients = json.loads(request.form.get("ingredients"))
+    ingredients = request.form.get("ingredients")
 
-    return "Added the drink successfully!"
+    if ingredients is not None:
+        ingredients = json.loads(ingredients)
+        # TODO: Write the json to the file here please for drinks!
+        return f"Added {title} to your drinks successfully!"
+    else:
+        return f"Failed to add to your drinks"
 
 @app.post('/add_meal')
 def add_meal():
@@ -107,9 +111,14 @@ def add_meal():
     instructions = request.form.get("instructions")
     area = request.form.get("area")
     # This is an array so we had to convert this to json before we sent it so we re-load it here!
-    ingredients = json.loads(request.form.get("ingredients"))
+    ingredients = request.form.get("ingredients")
 
-    return "Added the meal successfully!"
+    if ingredients is not None:
+        ingredients = json.loads(ingredients)
+        # TODO: Write the json to the file here please for meals!
+        return f"Added {title} to your meals successfully!"
+    else:
+        return f"Failed to add to your meals"
 
 @app.get('/write')
 def write_recipe():
