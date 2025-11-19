@@ -1,7 +1,9 @@
+import os
 import json
 
 import requests
 from flask import Flask, render_template, request
+
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 
@@ -99,9 +101,17 @@ def add_drink():
     if ingredients is not None:
         ingredients = json.loads(ingredients)
         # TODO: Write the json to the file here please for drinks!
-        with open("drinks.json", "a") as f:
-            f.write(json.dumps({"title": title, "category": category, "instructions": instructions, "ingredients": ingredients, "img_url": img_url}))
-            f.write("\n")
+        drinks = {}
+        if os.path.exists("drinks.json"):
+            with open ("drinks.json", "r") as f:
+                try:
+                    drinks = json.load(f)
+                except json.JSONDecodeError:
+                    drinks = {}
+        drinks[title] = {"category": category, "instructions": instructions, "ingredients": ingredients, "img_url": img_url}
+
+        with open("drinks.json", "w") as f:
+            json.dump(drinks, f)
 
         return f"Added {title} to your drinks successfully!"
     else:
@@ -120,10 +130,17 @@ def add_meal():
     if ingredients is not None:
         ingredients = json.loads(ingredients)
         # TODO: Write the json to the file here please for meals!
-        with open("meals.json", "a") as f:
-            f.write(json.dumps({"title": title, "category": category, "instructions": instructions, "area": area, "ingredients": ingredients, "img_url": img_url}))
-            f.write("\n")
+        meals = {}
+        if os.path.exists("meals.json"):
+            with open ("meals.json", "r") as f:
+                try:
+                    meals = json.load(f)
+                except json.JSONDecodeError:
+                    meals = {}
+        meals[title] = {"category": category, "area": area, "instructions": instructions, "ingredients": ingredients, "img_url": img_url}
 
+        with open("meals.json", "w") as f:
+            json.dump(meals, f)
         return f"Added {title} to your meals successfully!"
     else:
         return f"Failed to add to your meals"
