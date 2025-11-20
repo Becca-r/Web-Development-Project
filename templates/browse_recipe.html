@@ -5,7 +5,11 @@
 <p><strong>Instructions: </strong>{{ instructions }}</p>
 <p><strong>Ingredients: </strong>
   {% for ingredient in ingredients %}
-    {{ ingredient }},
+    {% if not loop.last %}
+      {{ ingredient }},
+    {% else %}
+      {{ ingredient }}
+    {% endif %}
   {% endfor %}
 </p>
 
