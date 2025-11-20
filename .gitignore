@@ -4,6 +4,7 @@
 # project data
 drinks.json
 meals.json
+internals
 
 # virtual python environment
 .venv

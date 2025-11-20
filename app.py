@@ -3,9 +3,10 @@ import json
 import tempfile
 
 import requests
+from jinja2 import Environment, FileSystemLoader
 from flask import Flask, render_template, request
 
-
+env = Environment(loader=FileSystemLoader('./templates'))
 
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
@@ -14,8 +15,6 @@ app = Flask(__name__, static_url_path='/static', static_folder='static')
 @app.route('/')
 def index():
     return render_template("Home.html")
-
-
 
 
 @app.get('/browse')
@@ -29,23 +28,20 @@ def browse_recipes():
     meal_str_area = meal.get('strArea')
     meal_instructions = meal.get('strInstructions')
     meal_ingredients = make_ingredient_list(meal, 1, 20)
-    data_dict = {"title": meal_str, "category": meal_category, "area": meal_str_area, "instructions": meal_instructions, "img_url": meal_img_url, "ingredients": json.dumps(meal_ingredients)}
-    json_data = json.dumps(data_dict)
+    meal_data = {"title": meal_str, "category": meal_category, "area": meal_str_area, "instructions": meal_instructions, "img_url": meal_img_url, "ingredients": meal_ingredients}
+    json_meal_data = json.dumps(meal_data)
+    file_path = "internals/meal.json"
+    directory = os.path.dirname(file_path)
 
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
-    html_start = (f"<h2>{meal_str}</h2>"
-                  f"<img src='{meal_img_url}' alt='{meal_str}'>"
-                  f"<p><strong>Category: </strong>{meal_category}</p>"
-                  f"<p><strong>Area: </strong>{meal_str_area}</p>")
-    html_end = (f"<p><strong>Instructions: </strong>{meal_instructions}</p>"
-                "<button id='saved_meals' class='button save' hx-post='/add_meal' hx-vals=\'"
-                f'{json_data}'
-                "\' hx-target='#meal_confirm' hx-trigger='click'>Add To Saved Meals</button>"
-                "<div id='meal_confirm'></div>")
-    html_ingredients = get_ingredient_html(meal_ingredients)
+    with open(file_path, "w") as meal_file:
+        meal_file.write(json_meal_data)
 
+    browse_recipes_template = env.get_template("browse_recipe.html")
 
-    return html_start + html_ingredients + html_end
+    return browse_recipes_template.render(meal_data)
 
 
 @app.get('/drinks')
@@ -58,28 +54,26 @@ def drinks():
     drink_category = drink.get('strCategory')
     drink_instructions = drink.get('strInstructions')
     drink_ingredients = make_ingredient_list(drink, 1, 4)
-    data_dict = {"title": drink_str, "category": drink_category, "instructions": drink_instructions,
-                 "ingredients": json.dumps(drink_ingredients), "img_url": drink_img_url}
-    json_data = json.dumps(data_dict)
+    drink_data = {"title": drink_str, "category": drink_category, "instructions": drink_instructions,
+                 "ingredients": drink_ingredients, "img_url": drink_img_url}
+    json_drink_data = json.dumps(drink_data)
+    file_path = "internals/drink.json"
+    directory = os.path.dirname(file_path)
 
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
-    html_start = (f"<h2>{drink_str}</h2><img src={drink_img_url} alt={drink_str}>"
-                  f"<p><strong>Category: </strong>{drink_category}</p>")
-    html_end = (f"<p><strong>Instructions: </strong>{drink_instructions}</p>"
-                '<button class="button save" hx-post="/add_drink" hx-vals=\''
-                f'{json_data}'
-                '\' hx-target="#drink_confirm" hx-trigger="click">Add To Saved Drinks</button>'
-                "<div id='drink_confirm'></div>")
-    html_ingredients = get_ingredient_html(drink_ingredients)
+    with open(file_path, "w") as drink_file:
+        drink_file.write(json_drink_data)
 
+    drinks_template = env.get_template("drinks.html")
 
-    return html_start + html_ingredients + html_end
+    return drinks_template.render(drink_data)
 
 
 def make_ingredient_list(type_dict, start, end):
     ingredient_list = []
     end += 1  # This makes sure that we get the last ingredient too!!!
-
 
     for i in range(start, end):
         attribute_name = f'strIngredient{i}'
@@ -89,37 +83,18 @@ def make_ingredient_list(type_dict, start, end):
         if ingredient is not None and ingredient != "":
             ingredient_list.append(ingredient)
 
-
     return ingredient_list
-
-
-def get_ingredient_html(ingredient_list):
-    html_ingredients = "<p><strong>Ingredients: </strong>"
-
-
-    for i, ingredient in enumerate(ingredient_list):
-        if i == len(ingredient_list) - 1:
-            html_ingredients += ingredient
-        else:
-            html_ingredients += ingredient + ", "
-    html_ingredients += "</p>"
-
-
-    return html_ingredients
-
 
 @app.post('/add_drink')
 def add_drink():
-    title = request.form.get('title')
-    img_url = request.form.get("img_url")
-    category = request.form.get("category")
-    instructions = request.form.get("instructions")
-    # This is an array so we had to convert this to json before we sent it so we re-load it here!
-    ingredients = request.form.get("ingredients")
+    drink_data = {}
 
+    # This is a workaround for not being able to send all the data across,
+    # since it wouldn't send if it got too large sometimes!
+    with open("internals/drink.json", "r") as f:
+        drink_data = json.loads(f.read())
 
-    if ingredients is not None:
-        ingredients = json.loads(ingredients)
+    if drink_data is not None:
         # TODO: Write the json to the file here please for drinks!
         drinks = {}
         if os.path.exists("drinks.json"):
@@ -128,33 +103,30 @@ def add_drink():
                     drinks = json.load(f)
                 except json.JSONDecodeError:
                     drinks = {}
-        drinks[title] = {"category": category, "instructions": instructions, "ingredients": ingredients, "img_url": img_url}
-
+        drinks[drink_data.get("title")] = {"category": drink_data.get("category"),
+                                           "instructions": drink_data.get("instructions"),
+                                           "ingredients": drink_data.get("ingredients"),
+                                           "img_url": drink_data.get("img_url")}
 
         with open("drinks.json", "w") as f:
-            saved_drinks = json.loads(f.read())
-            saved_drinks.update(drinks)
-            return saved_drinks
+           saved_drinks = json.loads(f.read())
+           saved_drinks.update(drinks)
 
-
-        return f"Added {title} to your drinks successfully!"
+        return f"Added {drink_data.get("title")} to your drinks successfully!"
     else:
         return f"Failed to add to your drinks"
 
 
 @app.post('/add_meal')
 def add_meal():
-    title = request.form.get("title")
-    img_url = request.form.get("img_url")
-    category = request.form.get("category")
-    instructions = request.form.get("instructions")
-    area = request.form.get("area")
-    # This is an array so we had to convert this to json before we sent it so we re-load it here!
-    ingredients = request.form.get("ingredients")
+    meal_data = {}
 
+    # This is a workaround for not being able to send all the data across,
+    # since it wouldn't send if it got too large sometimes!
+    with open("internals/meal.json", "r") as f:
+        meal_data = json.loads(f.read())
 
-    if ingredients is not None:
-        ingredients = json.loads(ingredients)
+    if meal_data is not None:
         # TODO: Write the json to the file here please for meals!
         meals = {}
         if os.path.exists("meals.json"):
@@ -163,14 +135,14 @@ def add_meal():
                     meals = json.load(f)
                 except json.JSONDecodeError:
                     meals = {}
-        meals[title] = {"category": category, "area": area, "instructions": instructions, "ingredients": ingredients, "img_url": img_url}
-
+        meals[meal_data.get("title")] = {"category": meal_data.get("category"), "area": meal_data.get("area"),
+                                  "instructions": meal_data.get("instructions"),
+                                  "ingredients": meal_data.get("ingredients"), "img_url": meal_data.get("img_url")}
 
         with open("meals.json", "w") as f:
             saved_meals = json.loads(f.read())
             saved_meals.update(meals)
-            return saved_meals
-        return f"Added {title} to your meals successfully!"
+        return f"Added {meal_data.get("title")} to your meals successfully!"
     else:
         return f"Failed to add to your meals"
 
