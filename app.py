@@ -1,6 +1,6 @@
 import os
 import json
-
+import tempfile
 
 import requests
 from flask import Flask, render_template, request
@@ -173,6 +173,56 @@ def add_meal():
         return f"Added {title} to your meals successfully!"
     else:
         return f"Failed to add to your meals"
+
+
+@app.delete('/delete_meal/<title>')
+def delete_meal(title):
+    success = False
+
+    with open("meals.json", "r") as meals_file, tempfile.NamedTemporaryFile(delete_on_close=False) as meal_tmp:
+        meals = json.loads(meals_file.read())
+
+        if title in meals:
+            meals.pop(title)
+            meal_json = json.dumps(meals)
+            meal_tmp.write(meal_json)
+            success = True
+
+    # The success flag is used to ensure that the files are closed before the file
+    # is replaced with the temp file
+    try:
+        if success:
+            os.replace(meal_tmp.name, meals_file.name)
+            return f"Successfully deleted {title}!", 200
+        else:
+            return "Failed to delete meal!"
+    finally:
+        os.remove(meal_tmp.name)
+
+
+@app.delete('/delete_drink/<title>')
+def delete_drink(title):
+    success = False
+
+    with open("drinks.json", "r") as drinks_file, tempfile.NamedTemporaryFile(delete_on_close=False) as drink_tmp:
+        drinks_dict = json.loads(drinks_file.read())
+
+        if title in drinks_dict:
+            drinks_dict.pop(title)
+            drinks_json = json.dumps(drinks)
+            drink_tmp.write(drinks_json)
+            success = True
+
+    # The success flag is used to ensure that the files are closed before the file
+    # is replaced with the temp file
+    try:
+        if success:
+            os.replace(drink_tmp.name, drinks_file.name)
+            return f"Successfully deleted {title}!", 200
+        else:
+            return "Failed to delete drink!"
+    finally:
+        os.remove(drink_tmp.name)
 
 
 @app.get('/write')
