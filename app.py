@@ -202,5 +202,9 @@ def write_recipe():
     return render_template("write_recipe.html")
 
 
+@app.get('/my_recipes')
+def my_recipes():
+    return "<p>You haven't saved any recipes yet!</p>"
+
 if __name__ == '__main__':
     app.run(port=5000)
