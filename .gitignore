@@ -1,5 +1,9 @@
 # Idea
 .idea
 
+# project data
+drinks.json
+meals.json
+
 # virtual python environment
-venv
+.venv
