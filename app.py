@@ -147,54 +147,40 @@ def add_meal():
         return f"Failed to add to your meals"
 
 
-@app.delete('/delete_meal/<title>')
-def delete_meal(title):
-    success = False
+@app.delete('/delete_meal/<idx>')
+def delete_meal(idx):
 
     with open("meals.json", "r") as meals_file, tempfile.NamedTemporaryFile(delete_on_close=False) as meal_tmp:
-        meals = json.loads(meals_file.read())
+        meals = json.loads(meals_file.read()) # Here we load in the list of meals that the user has saved!
+        meals.pop(idx)
+        meal_json = json.dumps(meals) # Convert the new content to json!
+        meal_tmp.write(meal_json)
 
-        if title in meals:
-            meals.pop(title)
-            meal_json = json.dumps(meals)
-            meal_tmp.write(meal_json)
-            success = True
-
-    # The success flag is used to ensure that the files are closed before the file
-    # is replaced with the temp file
+    # In case of a power outage we first wrote to a temporary file,
+    # so now we can replace the original content with the content from the temporary file!
     try:
-        if success:
-            os.replace(meal_tmp.name, meals_file.name)
-            return f"Successfully deleted {title}!", 200
-        else:
-            return "Failed to delete meal!"
+        os.replace(meal_tmp.name, meals_file.name)
+        return "", 204  # Effectively removes the content that was displayed for the entry and returns 204 (No Content)!
     finally:
-        os.remove(meal_tmp.name)
+        os.remove(meal_tmp.name) # The finally block makes sure that the temporary file is cleaned up!
 
 
-@app.delete('/delete_drink/<title>')
-def delete_drink(title):
-    success = False
+@app.delete('/delete_drink/<idx>')
+def delete_drink(idx):
 
     with open("drinks.json", "r") as drinks_file, tempfile.NamedTemporaryFile(delete_on_close=False) as drink_tmp:
-        drinks_dict = json.loads(drinks_file.read())
+        drinks_dict = json.loads(drinks_file.read()) # Here we load in the list of drinks that the user has saved!
+        drinks_dict.pop(idx)
+        drinks_json = json.dumps(drinks) # Convert the new content to json!
+        drink_tmp.write(drinks_json)
 
-        if title in drinks_dict:
-            drinks_dict.pop(title)
-            drinks_json = json.dumps(drinks)
-            drink_tmp.write(drinks_json)
-            success = True
-
-    # The success flag is used to ensure that the files are closed before the file
-    # is replaced with the temp file
+    # In case of a power outage we first wrote to a temporary file,
+    # so now we can replace the original content with the content from the temporary file!
     try:
-        if success:
-            os.replace(drink_tmp.name, drinks_file.name)
-            return f"Successfully deleted {title}!", 200
-        else:
-            return "Failed to delete drink!"
+        os.replace(drink_tmp.name, drinks_file.name)
+        return "", 204 # Effectively removes the content that was displayed for the entry and returns 204 (No Content)!
     finally:
-        os.remove(drink_tmp.name)
+        os.remove(drink_tmp.name) # The finally block makes sure that the temporary file is cleaned up!
 
 
 @app.get('/write')
