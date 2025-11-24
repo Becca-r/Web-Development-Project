@@ -96,21 +96,25 @@ def add_drink():
 
     if drink_data is not None:
         # TODO: Write the json to the file here please for drinks!
-        drinks = {}
-        if os.path.exists("drinks.json"):
+        drinks = "drinks.json"
+        if os.path.exists("drinks.json")  and os.path.getsize("drinks.json") != 0:
             with open ("drinks.json", "r") as f:
-                try:
-                    drinks = json.load(f)
-                except json.JSONDecodeError:
-                    drinks = {}
-        drinks[drink_data.get("title")] = {"category": drink_data.get("category"),
-                                           "instructions": drink_data.get("instructions"),
-                                           "ingredients": drink_data.get("ingredients"),
-                                           "img_url": drink_data.get("img_url")}
+                drinks = json.load(f)
+        else:
+            drinks = {}
+        drinks[title] = {"category": category, "instructions": instructions, "ingredients": ingredients, "img_url": img_url}
 
+
+        dir_path = os.path.dirname(os.path.abspath(__file__))
+        fd, temp_path = tempfile.mkstemp(dir=dir_path)
+        with open(temp_path, "w") as f:
+            json.dump(drinks, f)
+        os.replace(temp_path, "drinks.json")      
         with open("drinks.json", "w") as f:
-           saved_drinks = json.loads(f.read())
-           saved_drinks.update(drinks)
+            saved_drinks = json.loads(f.read())
+            saved_drinks.update(drinks)
+            return saved_drinks
+
 
         return f"Added {drink_data.get("title")} to your drinks successfully!"
     else:
@@ -128,20 +132,25 @@ def add_meal():
 
     if meal_data is not None:
         # TODO: Write the json to the file here please for meals!
-        meals = {}
-        if os.path.exists("meals.json"):
+        meals = "meals.json"
+        if os.path.exists("meals.json")  and os.path.getsize("meals.json") != 0:
             with open ("meals.json", "r") as f:
-                try:
-                    meals = json.load(f)
-                except json.JSONDecodeError:
-                    meals = {}
-        meals[meal_data.get("title")] = {"category": meal_data.get("category"), "area": meal_data.get("area"),
-                                  "instructions": meal_data.get("instructions"),
-                                  "ingredients": meal_data.get("ingredients"), "img_url": meal_data.get("img_url")}
+                meals = json.load(f)
+        else:
+            meals = {}
+        meals[title] = {"category": category, "area": area, "instructions": instructions, "ingredients": ingredients, "img_url": img_url}
 
+
+        dir_path = os.path.dirname(os.path.abspath(__file__))
+        fd, temp_path = tempfile.mkstemp(dir=dir_path)
+        with open(temp_path, "w") as f:
+            json.dump(meals, f)
+        os.replace(temp_path, "meals.json")      
         with open("meals.json", "w") as f:
             saved_meals = json.loads(f.read())
             saved_meals.update(meals)
+            return saved_meals
+
         return f"Added {meal_data.get("title")} to your meals successfully!"
     else:
         return f"Failed to add to your meals"
