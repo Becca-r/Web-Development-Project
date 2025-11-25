@@ -177,38 +177,56 @@ def add_meal():
 
 @app.delete('/delete_meal/<idx>')
 def delete_meal(idx):
+    temp_dir = "./tmp"
 
-    with open("meals.json", "r") as meals_file, tempfile.NamedTemporaryFile(delete_on_close=False) as meal_tmp:
-        meals = json.loads(meals_file.read()) # Here we load in the list of meals that the user has saved!
-        meals.pop(idx)
-        meal_json = json.dumps(meals) # Convert the new content to json!
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
+
+    fd, temp_name = tempfile.mkstemp(dir=temp_dir)
+    os.close(fd)
+
+    with open("meals.json", "r") as meals_file, open(temp_name, "w") as meal_tmp:
+        meals_dict = json.loads(meals_file.read()) # Here we load in the list of meals that the user has saved!
+        meals_dict.pop(idx)
+        meal_json = json.dumps(meals_dict, indent=2) # Convert the new content to json!
         meal_tmp.write(meal_json)
+        meal_tmp.flush()
 
-    # In case of a power outage we first wrote to a temporary file,
-    # so now we can replace the original content with the content from the temporary file!
+    temp_path = os.path.join(temp_dir, meal_tmp.name)
+
     try:
-        os.replace(meal_tmp.name, meals_file.name)
+        os.replace(temp_path, meals_file.name)
         return "", 204  # Effectively removes the content that was displayed for the entry and returns 204 (No Content)!
     finally:
-        os.remove(meal_tmp.name) # The finally block makes sure that the temporary file is cleaned up!
+        if os.path.exists(temp_path):
+            os.remove(temp_path) # Clean up the temporary file!
 
 
 @app.delete('/delete_drink/<idx>')
 def delete_drink(idx):
+    temp_dir = "./tmp"
 
-    with open("drinks.json", "r") as drinks_file, tempfile.NamedTemporaryFile(delete_on_close=False) as drink_tmp:
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
+
+    fd, temp_name = tempfile.mkstemp(dir=temp_dir)
+    os.close(fd)
+
+    with open("drinks.json", "r") as drinks_file, open(temp_name, "w") as drink_tmp:
         drinks_dict = json.loads(drinks_file.read()) # Here we load in the list of drinks that the user has saved!
         drinks_dict.pop(idx)
-        drinks_json = json.dumps(drinks) # Convert the new content to json!
+        drinks_json = json.dumps(drinks_dict, indent=2) # Convert the new content to json!
         drink_tmp.write(drinks_json)
+        drink_tmp.flush()
 
-    # In case of a power outage we first wrote to a temporary file,
-    # so now we can replace the original content with the content from the temporary file!
+    temp_path = os.path.join(temp_dir, drink_tmp.name)
+
     try:
-        os.replace(drink_tmp.name, drinks_file.name)
+        os.replace(temp_path, drinks_file.name)
         return "", 204 # Effectively removes the content that was displayed for the entry and returns 204 (No Content)!
     finally:
-        os.remove(drink_tmp.name) # The finally block makes sure that the temporary file is cleaned up!
+        if os.path.exists(temp_path):
+            os.remove(temp_path) # Clean up the temporary file!
 
 
 @app.get('/write')
