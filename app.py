@@ -95,26 +95,43 @@ def add_drink():
         drink_data = json.loads(f.read())
 
     if drink_data is not None:
-        # TODO: Write the json to the file here please for drinks!
-        drinks = "drinks.json"
-        if os.path.exists("drinks.json")  and os.path.getsize("drinks.json") != 0:
-            with open ("drinks.json", "r") as f:
-                drinks = json.load(f)
+        temp_dir = "./tmp"
+
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir)
+
+        fd, temp_name = tempfile.mkstemp(dir=temp_dir)
+        os.close(fd)
+
+        if not os.path.exists("drinks.json") or (os.path.exists("drinks.json") and os.path.getsize("drinks.json") == 0):
+            with open(temp_name, "w") as drink_temp:
+                drink_data_list = [drink_data]
+                drink_data_json = json.dumps(drink_data_list)
+                drink_temp.write(drink_data_json)
+                drink_temp.flush()
+
+            temp_path = os.path.join(temp_dir, drink_temp.name)
+
+            try:
+                os.replace(temp_path, "drinks.json")
+            finally:
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
         else:
-            drinks = {}
-        drinks[title] = {"category": category, "instructions": instructions, "ingredients": ingredients, "img_url": img_url}
+            with open("drinks.json", "r") as drink_file, open(temp_name, "w") as drink_temp:
+                drink_data_list = json.loads(drink_file.read())
+                drink_data_list.append(drink_data)
+                drink_data_json = json.dumps(drink_data_list, indent=2)
+                drink_temp.write(drink_data_json)
+                drink_temp.flush()
 
+            temp_path = os.path.join(temp_dir, drink_temp.name)
 
-        dir_path = os.path.dirname(os.path.abspath(__file__))
-        fd, temp_path = tempfile.mkstemp(dir=dir_path)
-        with open(temp_path, "w") as f:
-            json.dump(drinks, f)
-        os.replace(temp_path, "drinks.json")      
-        with open("drinks.json", "w") as f:
-            saved_drinks = json.loads(f.read())
-            saved_drinks.update(drinks)
-            return saved_drinks
-
+            try:
+                os.replace(temp_path, drink_file.name)
+            finally:
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
 
         return f"Added {drink_data.get("title")} to your drinks successfully!"
     else:
@@ -138,7 +155,10 @@ def add_meal():
                 meals = json.load(f)
         else:
             meals = {}
-        meals[title] = {"category": category, "area": area, "instructions": instructions, "ingredients": ingredients, "img_url": img_url}
+        meals[meal_data.get("title")] = {"category": meal_data.get("category"), "area": meal_data.get("area"),
+                                         "instructions": meal_data.get("instructions"),
+                                         "ingredients": meal_data.get("ingredients"),
+                                         "img_url": meal_data.get("img_url")}
 
 
         dir_path = os.path.dirname(os.path.abspath(__file__))
@@ -149,7 +169,6 @@ def add_meal():
         with open("meals.json", "w") as f:
             saved_meals = json.loads(f.read())
             saved_meals.update(meals)
-            return saved_meals
 
         return f"Added {meal_data.get("title")} to your meals successfully!"
     else:
