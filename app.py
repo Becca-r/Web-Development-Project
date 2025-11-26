@@ -148,27 +148,43 @@ def add_meal():
         meal_data = json.loads(f.read())
 
     if meal_data is not None:
-        # TODO: Write the json to the file here please for meals!
-        meals = "meals.json"
-        if os.path.exists("meals.json")  and os.path.getsize("meals.json") != 0:
-            with open ("meals.json", "r") as f:
-                meals = json.load(f)
+        temp_dir = "./tmp"
+
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir)
+
+        fd, temp_name = tempfile.mkstemp(dir=temp_dir)
+        os.close(fd)
+
+        if not os.path.exists("meals.json") or (os.path.exists("meals.json") and os.path.getsize("meals.json") == 0):
+            with open(temp_name, "w") as meal_temp:
+                meal_data_list = [meal_data]
+                meal_data_json = json.dumps(meal_data_list)
+                meal_temp.write(meal_data_json)
+                meal_temp.flush()
+
+            temp_path = os.path.join(temp_dir, meal_temp.name)
+
+            try:
+                os.replace(temp_path, "meals.json")
+            finally:
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
         else:
-            meals = {}
-        meals[meal_data.get("title")] = {"category": meal_data.get("category"), "area": meal_data.get("area"),
-                                         "instructions": meal_data.get("instructions"),
-                                         "ingredients": meal_data.get("ingredients"),
-                                         "img_url": meal_data.get("img_url")}
+            with open("meals.json", "r") as meal_file, open(temp_name, "w") as meal_temp:
+                meal_data_list = json.loads(meal_file.read())
+                meal_data_list.append(meal_data)
+                meal_data_json = json.dumps(meal_data_list, indent=2)
+                meal_temp.write(meal_data_json)
+                meal_temp.flush()
 
+            temp_path = os.path.join(temp_dir, meal_temp.name)
 
-        dir_path = os.path.dirname(os.path.abspath(__file__))
-        fd, temp_path = tempfile.mkstemp(dir=dir_path)
-        with open(temp_path, "w") as f:
-            json.dump(meals, f)
-        os.replace(temp_path, "meals.json")      
-        with open("meals.json", "w") as f:
-            saved_meals = json.loads(f.read())
-            saved_meals.update(meals)
+            try:
+                os.replace(temp_path, meal_file.name)
+            finally:
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
 
         return f"Added {meal_data.get("title")} to your meals successfully!"
     else:
