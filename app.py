@@ -194,6 +194,7 @@ def add_meal():
 @app.delete('/delete_meal/<idx>')
 def delete_meal(idx):
     temp_dir = "./tmp"
+    meal_id = int(idx) - 1
 
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
@@ -203,7 +204,7 @@ def delete_meal(idx):
 
     with open("meals.json", "r") as meals_file, open(temp_name, "w") as meal_tmp:
         meals_dict = json.loads(meals_file.read()) # Here we load in the list of meals that the user has saved!
-        meals_dict.pop(idx)
+        del meals_dict[meal_id]
         meal_json = json.dumps(meals_dict, indent=2) # Convert the new content to json!
         meal_tmp.write(meal_json)
         meal_tmp.flush()
@@ -212,7 +213,10 @@ def delete_meal(idx):
 
     try:
         os.replace(temp_path, meals_file.name)
-        return "", 204  # Effectively removes the content that was displayed for the entry and returns 204 (No Content)!
+        if not meals_dict:
+            return "<p>You haven't saved any meals yet!</p>" # A workaround so that the last meal does not get replaced by a blank box!
+        else:
+            return "" # Effectively removes the content that was displayed for the entry!
     finally:
         if os.path.exists(temp_path):
             os.remove(temp_path) # Clean up the temporary file!
@@ -221,6 +225,7 @@ def delete_meal(idx):
 @app.delete('/delete_drink/<idx>')
 def delete_drink(idx):
     temp_dir = "./tmp"
+    drink_id = int(idx) - 1
 
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
@@ -230,7 +235,7 @@ def delete_drink(idx):
 
     with open("drinks.json", "r") as drinks_file, open(temp_name, "w") as drink_tmp:
         drinks_dict = json.loads(drinks_file.read()) # Here we load in the list of drinks that the user has saved!
-        drinks_dict.pop(idx)
+        del drinks_dict[drink_id]
         drinks_json = json.dumps(drinks_dict, indent=2) # Convert the new content to json!
         drink_tmp.write(drinks_json)
         drink_tmp.flush()
@@ -239,7 +244,10 @@ def delete_drink(idx):
 
     try:
         os.replace(temp_path, drinks_file.name)
-        return "", 204 # Effectively removes the content that was displayed for the entry and returns 204 (No Content)!
+        if not drinks_dict:
+            return "<p>You haven't saved any drinks yet!</p>" # A workaround so the last entry does not get replaced by a blank box!
+        else:
+            return "" # Effectively removes the content that was displayed for the entry!
     finally:
         if os.path.exists(temp_path):
             os.remove(temp_path) # Clean up the temporary file!
@@ -250,9 +258,17 @@ def write_recipe():
     return render_template("write_recipe.html")
 
 
-@app.get('/my_recipes')
-def my_recipes():
-    return "<p>You haven't saved any recipes yet!</p>"
+@app.get('/my_drinks')
+def my_drinks():
+    drinks_list = []
+
+    with open("drinks.json", "r") as drinks_data:
+        if drinks_data:
+            drinks_list = json.loads(drinks_data.read())
+
+    my_drinks_template = env.get_template("my_drinks.html")
+
+    return my_drinks_template.render(drinks=drinks_list)
 
 if __name__ == '__main__':
     app.run(port=5000)
