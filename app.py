@@ -270,5 +270,11 @@ def my_drinks():
 
     return my_drinks_template.render(drinks=drinks_list)
 
+@app.get('/my_meals')
+def my_meals():
+    # TODO: Please remove the pass and write the code for viewing the meals here!
+    # TODO: Also please add the my_meals button in Home.html for this endpoint!
+    pass
+
 if __name__ == '__main__':
     app.run(port=5000)
