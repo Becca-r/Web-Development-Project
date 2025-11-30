@@ -17,7 +17,7 @@
           {% endif %}
         {% endfor %}
       </p>
-      <button class="button" hx-delete="/delete_drink/{{ loop.index }}" hx-swap="innerHTML" hx-target="#drink_{{ loop.index }}" hx-trigger="click" hx-confirm="Are you sure you want to delete this drink?">Delete</button>
+      <button class="button" hx-delete="/delete_drink/{{ loop.index }}" hx-swap="innerHTML" hx-target="#drink_{{ loop.index }}" hx-trigger="click" hx-confirm="Are you sure you want to delete {{ drink.title }} drink">Delete</button>
     </div>
   {% endfor %}
 {% endif %}
