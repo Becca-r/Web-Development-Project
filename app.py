@@ -253,11 +253,6 @@ def delete_drink(idx):
             os.remove(temp_path) # Clean up the temporary file!
 
 
-@app.get('/write')
-def write_recipe():
-    return render_template("write_recipe.html")
-
-
 @app.get('/my_drinks')
 def my_drinks():
     drinks_list = []
