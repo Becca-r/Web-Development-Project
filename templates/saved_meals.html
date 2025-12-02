@@ -1,0 +1,18 @@
+{% for meal in meals%}
+<div id="meal_{{loop.index}}"><h2>{{meal.title}}</h2>
+<img src="{{meal.img_url}}" alt="{{meal.title}}">
+<p><strong>Category: </strong>{{meal.category}}</p>
+<p><strong>Area: </strong>{{meal.area}}</p>
+<p><strong>Instructions: </strong>{{meal.instructions}}</p>
+<p><strong>Ingredients: </strong>
+    {% for ingredient in meal.ingredients %}
+        {% if not loop.last %}
+            {{ ingredient }},
+        {% else %}
+            {{ ingredient }}
+        {% endif %}
+    {% endfor %}
+</p>
+<button class="button" hx-delete="/delete_meal/{{loop.index}}" hx-swap="innerHTML" hx-target="#meal_{{loop.index}}" hx-trigger="click" hx-confirm="Are you sure you want to delete {{ meal.title }} meal">Delete</button>
+</div>
+{% endfor %}
