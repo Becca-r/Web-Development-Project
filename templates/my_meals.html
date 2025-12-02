@@ -1,0 +1,16 @@
+{% if not meals %}
+    <p>No meals saved yet!</p>
+{% else %}
+    <div id = "saved-meal-recipe">
+        <input class="form-control" type="search" 
+        name="meal_search" placeholder="Begin Typing To Search Meals..."
+        hx-post="/meal_search"
+        hx-trigger="input changed delay:500ms, keyup[key=='Enter']"
+        hx-target="#saved_meals">
+
+        <div id="saved_meals">
+            {% include "saved_meals.html" %}
+        </div>
+
+    </div>
+{% endif %}
