@@ -1,17 +1,19 @@
-<h2>{{ title }}</h2>
-<img src="{{ img_url }}" alt="{{ title }}">
-<p><strong>Category: </strong>{{ category }}</p>
-<p><strong>Area: </strong>{{ area }}</p>
-<p><strong>Instructions: </strong>{{ instructions }}</p>
-<p><strong>Ingredients: </strong>
-  {% for ingredient in ingredients %}
-    {% if not loop.last %}
-      {{ ingredient }},
-    {% else %}
-      {{ ingredient }}
-    {% endif %}
-  {% endfor %}
-</p>
+<div id="meal-recipe">
+  <h2>{{ title }}</h2>
+  <img src="{{ img_url }}" alt="{{ title }}">
+  <p><strong>Category: </strong>{{ category }}</p>
+  <p><strong>Area: </strong>{{ area }}</p>
+  <p><strong>Instructions: </strong>{{ instructions }}</p>
+  <p><strong>Ingredients: </strong>
+    {% for ingredient in ingredients %}
+      {% if not loop.last %}
+        {{ ingredient }},
+      {% else %}
+        {{ ingredient }}
+      {% endif %}
+    {% endfor %}
+  </p>
 
-<button id='saved_meals' class='button save' hx-post='/add_meal' hx-target='#meal_confirm' hx-trigger='click'>Add To Saved Meals</button>
-<div id='meal_confirm'></div>
+  <button id='saved_meals' class='button save' hx-post='/add_meal' hx-target='#meal_confirm' hx-trigger='click'>Add To Saved Meals</button>
+  <div id='meal_confirm'></div>
+</div>
