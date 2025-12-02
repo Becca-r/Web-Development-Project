@@ -266,10 +266,16 @@ def my_drinks():
     return my_drinks_template.render(drinks=drinks_list)
 
 @app.get('/my_meals')
-def my_meals():
-    # TODO: Please remove the pass and write the code for viewing the meals here!
-    # TODO: Also please add the my_meals button in Home.html for this endpoint!
-    pass
+def my_meals():    
+    meals_list = []
+
+    with open("meals.json", "r") as meals_data:
+        if meals_data:
+            meals_list = json.loads(meals_data.read())
+
+    my_meals_template = env.get_template("my_meals.html")
+
+    return my_meals_template.render(meals=meals_list)
 
 if __name__ == '__main__':
     app.run(port=5000)
