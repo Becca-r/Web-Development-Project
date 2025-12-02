@@ -304,6 +304,9 @@ def drink_search():
         if drinks_data:
             drinks_list = json.loads(drinks_data.read())
 
+    if not drinks_list:
+        return "<p>You haven't saved any drinks yet!</p>"
+
     if search:
         filtered_drinks = filter(lambda drink: search.lower() in drink.get('title').lower(), drinks_list)
         drinks_list = list(filtered_drinks)
