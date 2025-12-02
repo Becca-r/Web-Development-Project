@@ -229,7 +229,6 @@ def delete_meal(idx):
                 del meals_dict[i]
                 break
 
-        del meals_dict[meal_id]
         meal_json = json.dumps(meals_dict, indent=2) # Convert the new content to json!
         meal_tmp.write(meal_json)
         meal_tmp.flush()
