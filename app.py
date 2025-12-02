@@ -328,4 +328,7 @@ def my_meals():
     return my_meals_template.render(meals=meals_list)
 
 if __name__ == '__main__':
-    app.run(port=5000)
+    if os.uname().nodename == 'csci331vm.cs.montana.edu':
+        app.run(host='csci331vm.cs.montana.edu', port=3001)
+    else:
+        app.run(port=5000)
