@@ -72,6 +72,11 @@ button.save {
   grid-template-columns: 1fr;
   gap: 2em
 }
+#saved_meals {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2em
+}
 @media screen and (min-width: 601px) {
   #saved-meal-recipe {
     max-width: 1000px;
@@ -80,6 +85,10 @@ button.save {
     max-width: 1000px;
   }
   #saved_drinks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  #saved_meals {
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
@@ -92,6 +101,10 @@ button.save {
     max-width: 1500px;
   }
   #saved_drinks {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  #saved_meals {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
   }
