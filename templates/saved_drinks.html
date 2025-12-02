@@ -1,5 +1,5 @@
 {% for drink in drinks %}
-  <div id="drink_{{ loop.index }}">
+  <div id="drink_{{ drink.id }}">
     <h2>{{ drink.title }}</h2>
     <img src="{{ drink.img_url }}" alt="{{ drink.title }}">
     <p><strong>Category: </strong>{{ drink.category }}</p>
@@ -14,6 +14,6 @@
         {% endif %}
       {% endfor %}
     </p>
-    <button class="button" hx-delete="/delete_drink/{{ loop.index }}" hx-swap="innerHTML" hx-target="#drink_{{ loop.index }}" hx-trigger="click" hx-confirm="Are you sure you want to delete {{ drink.title }} drink">Delete</button>
+    <button class="button" hx-delete="/delete_drink/{{ drink.id }}" hx-swap="outerHTML" hx-target="#drink_{{ drink.id }}" hx-trigger="click" hx-confirm="Are you sure you want to delete {{ drink.title }} drink">Delete</button>
   </div>
 {% endfor %}
