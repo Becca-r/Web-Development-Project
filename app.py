@@ -19,56 +19,63 @@ def index():
 
 @app.get('/browse')
 def browse_recipes():
-    res = requests.get('https://www.themealdb.com/api/json/v1/1/random.php')
-    data = json.loads(res.text)
-    meal = data.get('meals')[0]
-    meal_str = meal.get('strMeal')
-    meal_img_url = meal.get('strMealThumb')
-    meal_category = meal.get('strCategory')
-    meal_str_area = meal.get('strArea')
-    meal_instructions = meal.get('strInstructions')
-    meal_ingredients = make_ingredient_list(meal, 1, 20)
-    meal_data = {"title": meal_str, "category": meal_category, "area": meal_str_area, "instructions": meal_instructions, "img_url": meal_img_url, "ingredients": meal_ingredients}
-    json_meal_data = json.dumps(meal_data)
-    file_path = "internals/meal.json"
-    directory = os.path.dirname(file_path)
+    try:
+        res = requests.get('https://www.themealdb.com/api/json/v1/1/random.php')
+        data = json.loads(res.text)
+        meal = data.get('meals')[0]
+        meal_str = meal.get('strMeal')
+        meal_img_url = meal.get('strMealThumb')
+        meal_category = meal.get('strCategory')
+        meal_str_area = meal.get('strArea')
+        meal_instructions = meal.get('strInstructions')
+        meal_ingredients = make_ingredient_list(meal, 1, 20)
+        meal_data = {"title": meal_str, "category": meal_category, "area": meal_str_area, "instructions": meal_instructions, "img_url": meal_img_url, "ingredients": meal_ingredients}
+        json_meal_data = json.dumps(meal_data)
+        file_path = "internals/meal.json"
+        directory = os.path.dirname(file_path)
 
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
 
-    with open(file_path, "w") as meal_file:
-        meal_file.write(json_meal_data)
+        with open(file_path, "w") as meal_file:
+            meal_file.write(json_meal_data)
 
-    browse_recipes_template = env.get_template("browse_recipe.html")
+        browse_recipes_template = env.get_template("browse_recipe.html")
 
-    return browse_recipes_template.render(meal_data)
+        return browse_recipes_template.render(meal_data)
+    except requests.exceptions.ConnectionError:
+        return "<p>Cannot get data from the meals API, check your internet connection!<p>"
 
 
 @app.get('/drinks')
 def drinks():
-    res = requests.get('https://www.thecocktaildb.com/api/json/v1/1/random.php')
-    data = json.loads(res.text)
-    drink = data.get('drinks')[0]
-    drink_str = drink.get('strDrink')
-    drink_img_url = drink.get('strDrinkThumb')
-    drink_category = drink.get('strCategory')
-    drink_instructions = drink.get('strInstructions')
-    drink_ingredients = make_ingredient_list(drink, 1, 4)
-    drink_data = {"title": drink_str, "category": drink_category, "instructions": drink_instructions,
-                 "ingredients": drink_ingredients, "img_url": drink_img_url}
-    json_drink_data = json.dumps(drink_data)
-    file_path = "internals/drink.json"
-    directory = os.path.dirname(file_path)
+    try:
+        res = requests.get('https://www.thecocktaildb.com/api/json/v1/1/random.php')
+        data = json.loads(res.text)
+        drink = data.get('drinks')[0]
+        drink_str = drink.get('strDrink')
+        drink_img_url = drink.get('strDrinkThumb')
+        drink_category = drink.get('strCategory')
+        drink_instructions = drink.get('strInstructions')
+        drink_ingredients = make_ingredient_list(drink, 1, 4)
+        drink_data = {"title": drink_str, "category": drink_category, "instructions": drink_instructions,
+                      "ingredients": drink_ingredients, "img_url": drink_img_url}
+        json_drink_data = json.dumps(drink_data)
+        file_path = "internals/drink.json"
+        directory = os.path.dirname(file_path)
 
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
 
-    with open(file_path, "w") as drink_file:
-        drink_file.write(json_drink_data)
+        with open(file_path, "w") as drink_file:
+            drink_file.write(json_drink_data)
 
-    drinks_template = env.get_template("drinks.html")
+        drinks_template = env.get_template("drinks.html")
 
-    return drinks_template.render(drink_data)
+        return drinks_template.render(drink_data)
+    except requests.exceptions.ConnectionError:
+        return "<p>Cannot get data from the drinks API, check your internet connection!<p>"
+
 
 
 def make_ingredient_list(type_dict, start, end):
