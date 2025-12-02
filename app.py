@@ -273,10 +273,7 @@ def delete_drink(idx):
 
     try:
         os.replace(temp_path, drinks_file.name)
-        if not drinks_dict:
-            return "<p>You haven't saved any drinks yet!</p>" # A workaround so the last entry does not get replaced by a blank box!
-        else:
-            return "" # Effectively removes the content that was displayed for the entry!
+        return "" # Effectively removes the content that was displayed for the entry!
     finally:
         if os.path.exists(temp_path):
             os.remove(temp_path) # Clean up the temporary file!
@@ -303,14 +300,14 @@ def drink_search():
         if drinks_data:
             drinks_list = json.loads(drinks_data.read())
 
+    drink_search_template = env.get_template("saved_drinks.html")
+
     if not drinks_list:
-        return "<p>You haven't saved any drinks yet!</p>"
+        return drink_search_template.render(drinks=drinks_list)
 
     if search:
         filtered_drinks = filter(lambda drink: search.lower() in drink.get('title').lower(), drinks_list)
         drinks_list = list(filtered_drinks)
-
-    drink_search_template = env.get_template("saved_drinks.html")
 
     if not drinks_list:
         return "<p>No drinks match the search!</p>"
