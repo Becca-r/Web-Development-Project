@@ -142,9 +142,9 @@ def add_drink():
                 if os.path.exists(temp_path):
                     os.remove(temp_path)
 
-        return f"Added {drink_data.get("title")} to your drinks successfully!"
+        return f'Added {drink_data.get("title")} to your drinks successfully!'
     else:
-        return f"Failed to add to your drinks"
+        return f'Failed to add to your drinks'
 
 
 def get_next_id(data_list):
@@ -205,9 +205,9 @@ def add_meal():
                 if os.path.exists(temp_path):
                     os.remove(temp_path)
 
-        return f"Added {meal_data.get("title")} to your meals successfully!"
+        return f'Added {meal_data.get("title")} to your meals successfully!'
     else:
-        return f"Failed to add to your meals"
+        return f'Failed to add to your meals'
 
 
 @app.delete('/delete_meal/<idx>')
