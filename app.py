@@ -105,6 +105,7 @@ def add_drink():
 
         if not os.path.exists("drinks.json") or (os.path.exists("drinks.json") and os.path.getsize("drinks.json") == 0):
             with open(temp_name, "w") as drink_temp:
+                drink_data["id"] = 0
                 drink_data_list = [drink_data]
                 drink_data_json = json.dumps(drink_data_list)
                 drink_temp.write(drink_data_json)
@@ -120,6 +121,7 @@ def add_drink():
         else:
             with open("drinks.json", "r") as drink_file, open(temp_name, "w") as drink_temp:
                 drink_data_list = json.loads(drink_file.read())
+                drink_data["id"] = get_next_id(drink_data_list)
                 drink_data_list.append(drink_data)
                 drink_data_json = json.dumps(drink_data_list, indent=2)
                 drink_temp.write(drink_data_json)
@@ -137,6 +139,14 @@ def add_drink():
     else:
         return f"Failed to add to your drinks"
 
+
+def get_next_id(data_list):
+    if data_list:
+        last_index = len(data_list) - 1
+        next_id = data_list[last_index].get("id") + 1
+        return next_id
+    else:
+        return 0
 
 @app.post('/add_meal')
 def add_meal():
@@ -225,7 +235,7 @@ def delete_meal(idx):
 @app.delete('/delete_drink/<idx>')
 def delete_drink(idx):
     temp_dir = "./tmp"
-    drink_id = int(idx) - 1
+    drink_id = int(idx)
 
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
@@ -235,7 +245,12 @@ def delete_drink(idx):
 
     with open("drinks.json", "r") as drinks_file, open(temp_name, "w") as drink_tmp:
         drinks_dict = json.loads(drinks_file.read()) # Here we load in the list of drinks that the user has saved!
-        del drinks_dict[drink_id]
+
+        for i, drink in enumerate(drinks_dict):
+            if drink.get("id") == drink_id:
+                del drinks_dict[i]
+                break
+
         drinks_json = json.dumps(drinks_dict, indent=2) # Convert the new content to json!
         drink_tmp.write(drinks_json)
         drink_tmp.flush()
@@ -264,6 +279,26 @@ def my_drinks():
     my_drinks_template = env.get_template("my_drinks.html")
 
     return my_drinks_template.render(drinks=drinks_list)
+
+@app.post('/drink_search')
+def drink_search():
+    drinks_list = []
+    search = request.form.get("drink_search")
+
+    with open("drinks.json", "r") as drinks_data:
+        if drinks_data:
+            drinks_list = json.loads(drinks_data.read())
+
+    if search:
+        filtered_drinks = filter(lambda drink: search.lower() in drink.get('title').lower(), drinks_list)
+        drinks_list = list(filtered_drinks)
+
+    drink_search_template = env.get_template("saved_drinks.html")
+
+    if not drinks_list:
+        return "<p>No drinks match the search!</p>"
+    else:
+        return drink_search_template.render(drinks=drinks_list)
 
 @app.get('/my_meals')
 def my_meals():    
