@@ -169,6 +169,7 @@ def add_meal():
         if not os.path.exists("meals.json") or (os.path.exists("meals.json") and os.path.getsize("meals.json") == 0):
             with open(temp_name, "w") as meal_temp:
                 meal_data_list = [meal_data]
+                meal_data["id"] = 0
                 meal_data_json = json.dumps(meal_data_list)
                 meal_temp.write(meal_data_json)
                 meal_temp.flush()
@@ -183,6 +184,7 @@ def add_meal():
         else:
             with open("meals.json", "r") as meal_file, open(temp_name, "w") as meal_temp:
                 meal_data_list = json.loads(meal_file.read())
+                meal_data["id"] = get_next_id(meal_data_list)
                 meal_data_list.append(meal_data)
                 meal_data_json = json.dumps(meal_data_list, indent=2)
                 meal_temp.write(meal_data_json)
@@ -204,7 +206,7 @@ def add_meal():
 @app.delete('/delete_meal/<idx>')
 def delete_meal(idx):
     temp_dir = "./tmp"
-    meal_id = int(idx) - 1
+    meal_id = int(idx)
 
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
@@ -214,6 +216,12 @@ def delete_meal(idx):
 
     with open("meals.json", "r") as meals_file, open(temp_name, "w") as meal_tmp:
         meals_dict = json.loads(meals_file.read()) # Here we load in the list of meals that the user has saved!
+
+        for i, meal in enumerate(meals_dict):
+            if meal.get("id") == meal_id:
+                del meals_dict[i]
+                break
+
         del meals_dict[meal_id]
         meal_json = json.dumps(meals_dict, indent=2) # Convert the new content to json!
         meal_tmp.write(meal_json)
