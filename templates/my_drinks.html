@@ -9,25 +9,7 @@
            hx-target="#saved_drinks">
 
     <div id="saved_drinks">
-      {% for drink in drinks %}
-        <div id="drink_{{ drink.id }}">
-          <h2>{{ drink.title }}</h2>
-          <img src="{{ drink.img_url }}" alt="{{ drink.title }}">
-          <p><strong>Category: </strong>{{ drink.category }}</p>
-          <p><strong>Instructions: </strong>{{ drink.instructions }}</p>
-          <p>
-            <strong>Ingredients: </strong>
-            {% for ingredient in drink.ingredients %}
-              {% if not loop.last %}
-                {{ ingredient }},
-              {% else %}
-                {{ ingredient }}
-              {% endif %}
-            {% endfor %}
-          </p>
-          <button class="button" hx-delete="/delete_drink/{{ drink.id }}" hx-swap="innerHTML" hx-target="#drink_{{ drink.id }}" hx-trigger="click" hx-confirm="Are you sure you want to delete {{ drink.title }} drink">Delete</button>
-        </div>
-      {% endfor %}
+      {% include "saved_drinks.html" %}
     </div>
   </div>
 {% endif %}
