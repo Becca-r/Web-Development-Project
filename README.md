@@ -1,6 +1,6 @@
 # ABOUT THIS PROJECT
 
-This app takes a new and fun approach to preparing your Thanksgiving or Christmas meal! 
+This app takes a new and fun approach to preparing your holiday meal! 
 By simply clicking the "browse recipe" or "drinks" button you will be greeted with a random recipe 
 for a drink or meal respectively. Once generated you can then save the recipe for later by 
 clicking the save button! Once you have your meal planned out you can view your saved recipes at any time
