@@ -326,6 +326,29 @@ def my_meals():
 
     return my_meals_template.render(meals=meals_list)
 
+@app.post('/meal_search')
+def meal_search():
+    meals_list = []
+    search = request.form.get("meal_search")
+
+    with open("meals.json", "r") as meals_data:
+        if meals_data:
+            meals_list = json.loads(meals_data.read())
+
+    meal_search_template = env.get_template("saved_meals.html")
+
+    if not meals_list:
+        return meal_search_template.render(meals=meals_list)
+
+    if search:
+        filtered_meals = filter(lambda meal: search.lower() in meal.get('title').lower(), meals_list)
+        meals_list = list(filtered_meals)
+
+    if not meals_list:
+        return "<p>No meals match the search!</p>"
+    else:
+        return meal_search_template.render(meals=meals_list)
+
 if __name__ == '__main__':
     if os.uname().nodename == 'csci331vm.cs.montana.edu':
         app.run(host='csci331vm.cs.montana.edu', port=3001)
