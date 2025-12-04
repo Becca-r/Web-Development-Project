@@ -351,6 +351,6 @@ def meal_search():
 
 if __name__ == '__main__':
     if os.uname().nodename == 'csci331vm.cs.montana.edu':
-        app.run(host='csci331vm.cs.montana.edu', port=3001)
+        app.run(host='csci331vm.cs.montana.edu', port=3071)
     else:
         app.run(port=5000)
