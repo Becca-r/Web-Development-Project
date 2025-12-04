@@ -1,7 +1,8 @@
 # WEBSITE AND SLIDE LINKS
 
-http://csci331vm.cs.montana.edu:3071/
-https://docs.google.com/presentation/d/1ya5Zf8RDYGyixti8LZZI6c5lp6y3p8e6tdLHXXpJB6Q/edit?usp=sharing
+[Website](http://csci331vm.cs.montana.edu:3071/)
+
+[Slides](https://docs.google.com/presentation/d/1ya5Zf8RDYGyixti8LZZI6c5lp6y3p8e6tdLHXXpJB6Q/edit?usp=sharing)
 
 # ABOUT THIS PROJECT
 
