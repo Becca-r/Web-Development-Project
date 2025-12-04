@@ -1,3 +1,8 @@
+# WEBSITE AND SLIDE LINKS
+
+http://csci331vm.cs.montana.edu:3071/
+https://docs.google.com/presentation/d/1ya5Zf8RDYGyixti8LZZI6c5lp6y3p8e6tdLHXXpJB6Q/edit?usp=sharing
+
 # ABOUT THIS PROJECT
 
 This app takes a new and fun approach to preparing your holiday meal! 
